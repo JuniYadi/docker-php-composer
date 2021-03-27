@@ -1,5 +1,5 @@
-# Load PHP 7.2 Alpine Version
-FROM php:7.2-fpm-alpine
+# Load PHP Alpine Version
+FROM php:7.4-fpm-alpine
 
 # Install Extention
 # - redis
