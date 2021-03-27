@@ -38,9 +38,6 @@ RUN set -eux \
         libpng-dev \
         libjpeg-turbo-dev \
 
-# PHP Custom Configuration
-COPY ./php/local.ini /usr/local/etc/php/conf.d/local.ini
-
 # Default Work DIR
 WORKDIR /code
 
