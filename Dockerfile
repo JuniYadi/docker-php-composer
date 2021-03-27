@@ -8,9 +8,11 @@ ARG PRODUCTION
 # - redis
 # - gd
 # - mysql + pdo_mysql
-RUN apk add --no-cache \
+RUN set -eux \
+    && apk add --no-cache --virtual .build-deps \
         pcre-dev \
         $PHPIZE_DEPS \
+        coreutils \
         curl \
         libtool \
         libxml2-dev \
@@ -20,14 +22,20 @@ RUN apk add --no-cache \
         freetype-dev \
         libjpeg-turbo-dev \
     && pecl install redis \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure gd \
+        --enable-gd \
+        --with-webp \
+        --with-freetype \
+        --with-jpeg \
     && docker-php-ext-install -j${nproc} gd mysqli pdo pdo_mysql \
     && docker-php-ext-enable redis \
+    && docker-php-source delete \
     && apk del \
-        --no-cache \
+        .build-deps \
         freetype-dev \
         libpng-dev \
-        libjpeg-turbo-dev
+        libjpeg-turbo-dev \
+    && true
 
 # PHP Default Configuration
 RUN if [ $PRODUCTION == true ]; then \
