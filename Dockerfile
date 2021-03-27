@@ -16,15 +16,19 @@ RUN apk add --no-cache \
         libxml2-dev \
         libpng \
         libpng-dev \
+        libjpeg-turbo \
+        freetype-dev \
         libjpeg-turbo-dev \
-        libwebp-dev \
-        zlib-dev \
-        libxpm-dev \
     && pecl install redis \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd mysqli pdo pdo_mysql \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-png \
+    && docker-php-ext-install -j${nproc} gd \
+    && docker-php-ext-install mysqli pdo pdo_mysql \
     && docker-php-ext-enable redis \
-    && apk del libpng-dev
+    && apk del \
+        --no-cache \
+        freetype-dev \
+        libpng-dev \
+        libjpeg-turbo-dev
 
 # PHP Default Configuration
 RUN if [ $PRODUCTION == true ]; then \
