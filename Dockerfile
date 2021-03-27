@@ -20,7 +20,7 @@ RUN apk add --no-cache \
         freetype-dev \
         libjpeg-turbo-dev \
     && pecl install redis \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-png \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j${nproc} gd \
     && docker-php-ext-install mysqli pdo pdo_mysql \
     && docker-php-ext-enable redis \
