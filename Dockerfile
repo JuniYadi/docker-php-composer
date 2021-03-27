@@ -10,6 +10,7 @@ RUN apk add --no-cache \
         libtool \
         libxml2-dev \
     && pecl install redis \
+    && docker-php-ext-install mysqli pdo pdo_mysql \
     && docker-php-ext-enable redis
 
 # Default Work DIR
