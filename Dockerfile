@@ -28,7 +28,7 @@ RUN apk add --no-cache --virtual .build-deps \
         --with-jpeg \
     && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
     && docker-php-ext-install -j${NPROC} gd mysqli pdo pdo_mysql \
-    && docker-php-ext-enable redis \
+    && docker-php-ext-enable redis gd \
     && docker-php-source delete \
     && apk del .build-deps \
         pcre-dev \
