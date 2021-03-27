@@ -11,7 +11,6 @@ ARG PRODUCTION
 RUN apk add --no-cache --virtual .build-deps \
         pcre-dev \
         $PHPIZE_DEPS \
-        coreutils \
         curl \
         libtool \
         libxml2-dev \
@@ -32,6 +31,9 @@ RUN apk add --no-cache --virtual .build-deps \
     && docker-php-ext-enable redis \
     && docker-php-source delete \
     && apk del .build-deps \
+        pcre-dev \
+        $PHPIZE_DEPS \
+        libxml2-dev \
         libwebp-dev \
         freetype-dev \
         libpng-dev \
