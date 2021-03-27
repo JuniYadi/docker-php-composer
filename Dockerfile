@@ -8,8 +8,7 @@ ARG PRODUCTION
 # - redis
 # - gd
 # - mysql + pdo_mysql
-RUN set -eux \
-    && apk add --no-cache --virtual .build-deps \
+RUN apk add --no-cache \
         pcre-dev \
         $PHPIZE_DEPS \
         coreutils \
