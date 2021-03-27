@@ -3,15 +3,35 @@ FROM php:8.0-fpm-alpine
 
 # Install Extention
 # - redis
+# - gd
+# - mysql + pdo_mysql
 RUN apk add --no-cache \
         pcre-dev \
         $PHPIZE_DEPS \
         curl \
         libtool \
         libxml2-dev \
+        libpng \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        libwebp-dev \
+        zlib-dev \
+        libxpm-dev \
     && pecl install redis \
-    && docker-php-ext-install mysqli pdo pdo_mysql \
-    && docker-php-ext-enable redis
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd mysqli pdo pdo_mysql \
+    && docker-php-ext-enable redis \
+    && apk del libpng-dev
+
+# PHP Default Configuration
+if [ $PRODUCTION == true ]; then
+    RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+else
+    RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+fi
+
+# PHP Custom Configuration
+COPY ./php/local.ini /usr/local/etc/php/conf.d/local.ini
 
 # Default Work DIR
 WORKDIR /code
