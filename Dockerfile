@@ -8,8 +8,7 @@ ARG PRODUCTION
 # - redis
 # - gd
 # - mysql + pdo_mysql
-RUN set -eux \
-    && apk add --no-cache --virtual .build-deps \
+RUN apk add --no-cache \
         pcre-dev \
         $PHPIZE_DEPS \
         coreutils \
@@ -32,17 +31,10 @@ RUN set -eux \
     && docker-php-ext-install -j${NPROC} gd mysqli pdo pdo_mysql \
     && docker-php-ext-enable redis \
     && docker-php-source delete \
-    && apk del \
-        .build-deps \
-        libwebp-dev \
+    && apk del libwebp-dev \
         freetype-dev \
         libpng-dev \
-        libjpeg-turbo-dev \
-    && true
-
-# PHP Default Configuration
-RUN if [ $PRODUCTION == true ]; then RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; fi
-RUN if [ $PRODUCTION == false ]; then RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"; fi
+        libjpeg-turbo-dev
 
 # PHP Custom Configuration
 COPY ./php/local.ini /usr/local/etc/php/conf.d/local.ini
