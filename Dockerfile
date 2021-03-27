@@ -1,54 +1,43 @@
-# Load PHP Alpine Version
-FROM php:8.0-fpm-alpine
+FROM php:7.4-fpm
 
-# Argument
-ARG PRODUCTION
+# Arguments defined in docker-compose.yml
+ARG user
+ARG uid
 
-# Install Extention
-# - redis
-# - gd
-# - mysql + pdo_mysql
-RUN apk add --no-cache --virtual .build-deps \
-        pcre-dev \
-        $PHPIZE_DEPS \
-        curl \
-        libtool \
-        libxml2-dev \
-        libpng \
-        libpng-dev \
-        libjpeg-turbo \
-        libwebp-dev \
-        freetype-dev \
-        libjpeg-turbo-dev \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    apt-utils \
+    curl \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) pdo_mysql mbstring exif pcntl bcmath gd zip \
     && pecl install redis \
-    && docker-php-ext-configure gd \
-        --enable-gd \
-        --with-webp \
-        --with-freetype \
-        --with-jpeg \
-    && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
-    && docker-php-ext-install -j${NPROC} gd mysqli pdo pdo_mysql \
-    && docker-php-ext-enable redis gd \
-    && docker-php-source delete \
-    && apk del .build-deps \
-        pcre-dev \
-        $PHPIZE_DEPS \
-        libxml2-dev \
-        libwebp-dev \
-        freetype-dev \
-        libpng-dev \
-        libjpeg-turbo-dev
+    && pecl install xdebug \
+    && docker-php-ext-enable redis xdebug \
+    && apt-get clean \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
 
 # PHP Custom Configuration
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 COPY ./php/local.ini /usr/local/etc/php/conf.d/local.ini
 
-# Default Work DIR
-WORKDIR /code
-
-# Install Composer
+# Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Expose PHP Port
-EXPOSE 9000
+# Create system user to run Composer and Artisan Commands
+RUN useradd -G www-data,root -u $uid -d /home/$user $user
+RUN mkdir -p /home/$user/.composer && \
+    chown -R $user:$user /home/$user
 
-CMD ["php-fpm"]
+# Set working directory
+WORKDIR /code
+
+USER $user
