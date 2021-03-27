@@ -1,5 +1,5 @@
 # Load PHP Alpine Version
-FROM php:8.0-fpm-alpine
+FROM php:7.4-fpm-alpine
 
 # Argument
 ARG PRODUCTION
