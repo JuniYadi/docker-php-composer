@@ -19,6 +19,7 @@ RUN set -eux \
         libpng \
         libpng-dev \
         libjpeg-turbo \
+        libwebp-dev \
         freetype-dev \
         libjpeg-turbo-dev \
     && pecl install redis \
