@@ -1,6 +1,9 @@
 # Load PHP Alpine Version
 FROM php:8.0-fpm-alpine
 
+# Argument
+ARG PRODUCTION
+
 # Install Extention
 # - redis
 # - gd
@@ -24,11 +27,11 @@ RUN apk add --no-cache \
     && apk del libpng-dev
 
 # PHP Default Configuration
-if [ $PRODUCTION == true ]; then
-    RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-else
-    RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-fi
+RUN if [ $PRODUCTION == true ]; then \
+        RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
+    else \
+        RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
+    fi \
 
 # PHP Custom Configuration
 COPY ./php/local.ini /usr/local/etc/php/conf.d/local.ini
