@@ -32,9 +32,7 @@ RUN set -eux \
     && docker-php-ext-install -j${NPROC} gd mysqli pdo pdo_mysql \
     && docker-php-ext-enable redis \
     && docker-php-source delete \
-    && apk del \
-        .build-deps \
-        libwebp-dev \
+    && apk del libwebp-dev \
         freetype-dev \
         libpng-dev \
         libjpeg-turbo-dev
