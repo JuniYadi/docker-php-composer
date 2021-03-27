@@ -28,11 +28,13 @@ RUN set -eux \
         --with-webp \
         --with-freetype \
         --with-jpeg \
-    && docker-php-ext-install -j${nproc} gd mysqli pdo pdo_mysql \
+    && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
+    && docker-php-ext-install -j${NPROC} gd mysqli pdo pdo_mysql \
     && docker-php-ext-enable redis \
     && docker-php-source delete \
     && apk del \
         .build-deps \
+        libwebp-dev \
         freetype-dev \
         libpng-dev \
         libjpeg-turbo-dev \
