@@ -31,18 +31,16 @@ RUN set -eux \
     && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
     && docker-php-ext-install -j${NPROC} gd mysqli pdo pdo_mysql \
     && docker-php-ext-enable redis \
-    && docker-php-source delete \
     && apk del \
         .build-deps \
         libwebp-dev \
         freetype-dev \
         libpng-dev \
         libjpeg-turbo-dev \
-    && true
 
 # PHP Default Configuration
-RUN if [ $PRODUCTION == true ]; then RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; fi
-RUN if [ $PRODUCTION == false ]; then RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"; fi
+RUN if [ $PRODUCTION == "true" ]; then RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; fi
+RUN if [ $PRODUCTION == "false" ]; then RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"; fi
 
 # PHP Custom Configuration
 COPY ./php/local.ini /usr/local/etc/php/conf.d/local.ini
