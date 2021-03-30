@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 
 # PHP Custom Configuration
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-COPY ../php/local.ini /usr/local/etc/php/conf.d/local.ini
+COPY ./php/local.ini /usr/local/etc/php/conf.d/local.ini
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
